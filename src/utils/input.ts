@@ -90,6 +90,29 @@ export const askQuestion = async (question: Question) => {
     return answers[question.name];
 };
 
+export const parseAnswers = (answers: Json, questions: Questions) => {
+    questions.forEach((question) => {
+        const { name } = question;
+
+        switch (question.type) {
+            case QuestionType.AutoComplete:
+            case QuestionType.Select:
+            case QuestionType.MultiSelect:
+                const { choices = [] } = question;
+                const selectedChoice = choices.find(
+                    (choice) => choice.label === answers[name]
+                );
+                answers[name] = selectedChoice?.id;
+                break;
+            case QuestionType.Input:
+            default:
+                break;
+        }
+    });
+
+    return answers;
+};
+
 export const askQuestions = async (questions: Questions) => {
     const parsedQuestions = questions.map((question) => {
         const { name, message, type = 'Input', optional, initial } = question;
@@ -120,5 +143,7 @@ export const askQuestions = async (questions: Questions) => {
         return output;
     });
 
-    return prompt(parsedQuestions);
+    const answers = await prompt(parsedQuestions);
+
+    return parseAnswers(answers, questions);
 };

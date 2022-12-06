@@ -27,6 +27,10 @@ exports.questions = {
             label: p.projectId,
         })),
     }),
+    newProjectName: {
+        name: 'newProjectName',
+        message: 'Choose a name for your new project',
+    },
 };
 // const questions = [
 //     {

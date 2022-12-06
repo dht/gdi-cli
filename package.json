@@ -1,5 +1,5 @@
 {
-    "name": "gdi-cli",
+    "name": "@gdi/cli",
     "version": "0.2.0",
     "description": "",
     "main": "src/index.js",
@@ -21,9 +21,9 @@
         "@gdi/types": "^0.0.83",
         "@google-cloud/storage": "^6.7.0",
         "@testing-library/react": "^13.4.0",
-        "@types/cli-table": "^0.3.0",
         "chalk": "^4.1.2",
         "chance": "^1.1.9",
+        "cli-spinner": "^0.2.10",
         "cli-table": "^0.3.11",
         "enquirer": "^2.3.6",
         "firebase": "^9.9.3",
@@ -43,6 +43,8 @@
         "yup": "^0.32.11"
     },
     "devDependencies": {
+        "@types/cli-spinner": "^0.2.1",
+        "@types/cli-table": "^0.3.0",
         "@types/fs-extra": "^9.0.13",
         "@types/jest": "^29.2.4",
         "@types/lodash": "^4.14.178",
