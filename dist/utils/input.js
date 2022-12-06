@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.askQuestions = exports.askQuestion = exports.boolean = exports.autoComplete = void 0;
+exports.askQuestions = exports.parseAnswers = exports.askQuestion = exports.boolean = exports.autoComplete = void 0;
 // see: https://stackoverflow.com/questions/67579700/typescript-how-to-import-autocomplete-from-enquirer
 // @ts-ignore-next-line
 const enquirer_1 = require("enquirer");
@@ -107,6 +107,25 @@ const askQuestion = (question) => __awaiter(void 0, void 0, void 0, function* ()
     return answers[question.name];
 });
 exports.askQuestion = askQuestion;
+const parseAnswers = (answers, questions) => {
+    questions.forEach((question) => {
+        const { name } = question;
+        switch (question.type) {
+            case types_1.QuestionType.AutoComplete:
+            case types_1.QuestionType.Select:
+            case types_1.QuestionType.MultiSelect:
+                const { choices = [] } = question;
+                const selectedChoice = choices.find((choice) => choice.label === answers[name]);
+                answers[name] = selectedChoice === null || selectedChoice === void 0 ? void 0 : selectedChoice.id;
+                break;
+            case types_1.QuestionType.Input:
+            default:
+                break;
+        }
+    });
+    return answers;
+};
+exports.parseAnswers = parseAnswers;
 const askQuestions = (questions) => __awaiter(void 0, void 0, void 0, function* () {
     const parsedQuestions = questions.map((question) => {
         const { name, message, type = 'Input', optional, initial } = question;
@@ -133,6 +152,7 @@ const askQuestions = (questions) => __awaiter(void 0, void 0, void 0, function* 
         }
         return output;
     });
-    return (0, enquirer_1.prompt)(parsedQuestions);
+    const answers = yield (0, enquirer_1.prompt)(parsedQuestions);
+    return (0, exports.parseAnswers)(answers, questions);
 });
 exports.askQuestions = askQuestions;
