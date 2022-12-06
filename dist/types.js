@@ -1,0 +1,30 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Validation = exports.QuestionType = void 0;
+var QuestionType;
+(function (QuestionType) {
+    QuestionType["AutoComplete"] = "AutoComplete";
+    QuestionType["BasicAuth"] = "BasicAuth";
+    QuestionType["Confirm"] = "Confirm";
+    QuestionType["Editable"] = "Editable";
+    QuestionType["Form"] = "Form";
+    QuestionType["Input"] = "Input";
+    QuestionType["Invisible"] = "Invisible";
+    QuestionType["List"] = "List";
+    QuestionType["MultiSelect"] = "MultiSelect";
+    QuestionType["Numeral"] = "Numeral";
+    QuestionType["Password"] = "Password";
+    QuestionType["Scale"] = "Scale";
+    QuestionType["Select"] = "Select";
+    QuestionType["Snippet"] = "Snippet";
+    QuestionType["Sort"] = "Sort";
+    QuestionType["Survey"] = "Survey";
+    QuestionType["Text"] = "Text";
+    QuestionType["Toggle"] = "Toggle";
+    QuestionType["Quiz"] = "Quiz";
+})(QuestionType = exports.QuestionType || (exports.QuestionType = {}));
+var Validation;
+(function (Validation) {
+    Validation["email"] = "email";
+    Validation["url"] = "url";
+})(Validation = exports.Validation || (exports.Validation = {}));

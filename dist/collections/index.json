@@ -1,0 +1,147 @@
+{
+    "connect": {
+        "type": "NODE",
+        "file": "connect.js",
+        "collection": "firebase",
+        "shortcuts": [
+            "connect"
+        ],
+        "description": "connect project to Firebase"
+    },
+    "create": {
+        "type": "NODE",
+        "file": "create.js",
+        "collection": "scaffolding",
+        "shortcuts": [
+            "create"
+        ],
+        "description": "generate scaffolding"
+    },
+    "bootstrap": {
+        "type": "NODE",
+        "file": "bootstrap.js",
+        "collection": "global",
+        "shortcuts": [
+            "bootstrap"
+        ],
+        "description": "bootstrap gdi instance"
+    },
+    "screenshots": {
+        "type": "NODE",
+        "file": "screenshots.js",
+        "collection": "photobooth",
+        "shortcuts": [
+            "screenshot",
+            "screenshots"
+        ],
+        "description": "takes screenshots for current template"
+    },
+    "apps": {
+        "type": "NODE",
+        "file": "apps.js",
+        "collection": "scaffolding",
+        "shortcuts": [
+            "apps"
+        ],
+        "description": "regenerate apps package"
+    },
+    "seedAdmin": {
+        "type": "NODE",
+        "file": "seed.admin.js",
+        "collection": "seeding",
+        "shortcuts": [
+            "setAdmin"
+        ],
+        "description": "make an existing user an admin"
+    },
+    "seedFirestore": {
+        "type": "NODE",
+        "file": "seed.firestore.js",
+        "collection": "seeding",
+        "shortcuts": [
+            "seed"
+        ],
+        "description": "generate firestore data"
+    },
+    "ping": {
+        "type": "SH",
+        "file": "ping.sh",
+        "collection": "firebase",
+        "shortcuts": [
+            "ping"
+        ],
+        "description": "ping"
+    },
+    "admin": {
+        "type": "SH",
+        "file": "admin.sh",
+        "collection": "global",
+        "shortcuts": [
+            "admin"
+        ],
+        "description": "start the admin in dev-mode"
+    },
+    "deploy": {
+        "type": "SH",
+        "file": "deploy.sh",
+        "collection": "global",
+        "shortcuts": [
+            "deploy"
+        ],
+        "description": "deploys both gdi-admin and gdi site"
+    },
+    "large": {
+        "type": "SH",
+        "file": "large.sh",
+        "collection": "global",
+        "shortcuts": [
+            "large"
+        ],
+        "description": "find large files in commit history"
+    },
+    "list": {
+        "type": "SH",
+        "file": "list.sh",
+        "collection": "global",
+        "shortcuts": [
+            "list"
+        ],
+        "description": "list"
+    },
+    "nice": {
+        "type": "SH",
+        "file": "nice.sh",
+        "collection": "global",
+        "shortcuts": [
+            "nice"
+        ],
+        "description": "bootstraps a new site"
+    },
+    "preview": {
+        "type": "SH",
+        "file": "preview.sh",
+        "collection": "global",
+        "shortcuts": [
+            "preview"
+        ],
+        "description": "start the site in dev-mode"
+    },
+    "start": {
+        "type": "SH",
+        "file": "start.sh",
+        "collection": "global",
+        "shortcuts": [
+            "start"
+        ],
+        "description": "starts the admin in dev-mode"
+    },
+    "seedClearAll": {
+        "type": "SH",
+        "file": "seed.clearAll.sh",
+        "collection": "seeding",
+        "shortcuts": [
+            "seedClearAll"
+        ],
+        "description": "clears all firestore data"
+    }
+}
