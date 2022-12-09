@@ -90,6 +90,15 @@
         ],
         "description": "deploys both gdi-admin and gdi site"
     },
+    "init": {
+        "type": "SH",
+        "file": "init.sh",
+        "collection": "global",
+        "shortcuts": [
+            "init"
+        ],
+        "description": "creates a new project"
+    },
     "large": {
         "type": "SH",
         "file": "large.sh",

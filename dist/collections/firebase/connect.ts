@@ -15,16 +15,16 @@ const { cwd } = argv;
 // ================================================
 
 const run = async () => {
-    const firebaseJsonPath = path.resolve(cwd, 'firebase.json');
+    const webappJsonPath = path.resolve(cwd, 'webapp.json');
 
-    if (!fs.existsSync(firebaseJsonPath)) {
+    if (!fs.existsSync(webappJsonPath)) {
         console.log(
-            chalk.red(`could not find "firebase.json" in ${firebaseJsonPath}`)
+            chalk.red(`could not find "webapp.json" in ${webappJsonPath}`)
         );
         return;
     }
 
-    const firebaseConfig = fs.readJsonSync(firebaseJsonPath);
+    const firebaseConfig = fs.readJsonSync(webappJsonPath);
     const { projectId } = firebaseConfig;
 
     writeEnvVite(`${cwd}/gdi-admin`, firebaseConfig, {
@@ -34,7 +34,6 @@ const run = async () => {
     });
 
     writeEnvVite(`${cwd}/gdi-site`, firebaseConfig);
-    writeEnvVite(cwd, firebaseConfig);
 
     const result = await cli.run(
         'firebase',

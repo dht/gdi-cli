@@ -11,7 +11,7 @@ import {
     findOrCreateWebApp,
     firebaseCliExists,
     FirebaseResponse,
-    runCommand$,
+    runCommand,
     setCwd,
     writeEnvFiles,
 } from '../../utils/firebase';
@@ -19,7 +19,8 @@ import { printTable } from '../../utils/console';
 import { get } from 'lodash';
 
 const argv = parseArgv(process.argv);
-const { cwd } = argv;
+const cwd = argv.cwd;
+const cwdAdmin = `${cwd}/gdi-admin`;
 
 // ================================================
 
@@ -36,7 +37,8 @@ const run = async () => {
         return;
     }
 
-    setCwd(cwd);
+    console.log(`working directory: ${chalk.cyan(cwdAdmin)}\n`);
+    setCwd(cwdAdmin);
 
     question = questions.existingOrNew;
     answer = await askQuestion(question);
@@ -45,26 +47,37 @@ const run = async () => {
         question = questions.newProjectName;
         answer = await askQuestion(question);
         projectId = await createProject(answer);
-        response = await runCommand$('use', [projectId], 'Linking project');
+
+        response = await runCommand({
+            command: 'use',
+            args: [projectId],
+            loadingMessage: 'Linking project',
+        });
+
         show.newProjectNextSteps(projectId);
         return;
     }
 
-    response = await runCommand$('projects:list', [], 'Fetching projects');
+    response = await runCommand({
+        command: 'projects:list',
+        loadingMessage: 'Fetching projects',
+    });
+
     question = questions.selectProject(response.data as Json[]);
     answer = await askQuestion(question);
     projectId = answer;
 
-    response = await runCommand$('use', [projectId], 'Linking project');
+    response = await runCommand({
+        command: 'use',
+        args: [projectId],
+        loadingMessage: 'Linking project',
+    });
 
     response = await findOrCreateWebApp();
 
     const sdkConfig = get(response, 'data.sdkConfig', {});
 
-    fs.writeFileSync(
-        `${cwd}/firebase.json`,
-        JSON.stringify(sdkConfig, null, 4)
-    );
+    fs.writeFileSync(`${cwd}/webapp.json`, JSON.stringify(sdkConfig, null, 4));
 
     writeEnvFiles(sdkConfig);
 
@@ -100,11 +113,9 @@ const show = {
     },
     loginInstructions: () => {
         console.log(`\nRun ${chalk.cyan('gdi start')} to run the admin`);
-        console.log('- navigate to http://localhost:3000');
-        console.log('- Sign in with Google\n');
-        console.log(
-            `After you've signed in once run ${chalk.cyan('gdi setAdmin')}`
-        );
+        console.log(`- navigate to ${chalk.yellow('http://localhost:3000')}`);
+        console.log('- Sign in with Google');
+        console.log(`- Return here and run ${chalk.cyan('gdi setAdmin')}\n`);
     },
 };
 

@@ -90,12 +90,14 @@ const parseInstructions = () => (command: Command, next: any) => {
 const postRun = () => (command: Command, next: any) => {
     const { local } = command;
     const { params } = local;
-    const { outputDir } = params;
+    const { outputDir, entityName } = params;
 
     const cwdInstall = `${outputDir}/scripts`;
 
     run('chmod', ['+x', 'install.sh'], cwdInstall).then(() => {
-        run('./scripts/install.sh', [], outputDir, { stdOutMode: true });
+        run('./scripts/install.sh', [entityName], outputDir, {
+            stdOutMode: true,
+        });
     });
 
     next();
