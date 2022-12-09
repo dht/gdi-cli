@@ -44,10 +44,11 @@ const argv_1 = require("../../utils/argv");
 const firestore_1 = require("../../utils/firestore");
 const fs = __importStar(require("fs"));
 const argv = (0, argv_1.parseArgv)(process.argv);
-const { cwd } = argv;
+const cwd = argv.cwd;
+const cwdAdmin = `${cwd}/gdi-admin`;
 // ================================================
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
-    const envResult = (0, env_1.readEnvVite)(cwd);
+    const envResult = (0, env_1.readEnvVite)(cwdAdmin);
     if (!envResult.success) {
         (0, env_1.envError)(envResult.error);
         return;
@@ -72,9 +73,9 @@ const run = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(chalk_1.default.green('done'));
 });
 const updateStorageRules = (userId) => {
-    let pathStorageRules = `${cwd}/storage.rules`;
+    let pathStorageRules = `${cwdAdmin}/storage.rules`;
     if (!fs.existsSync(pathStorageRules)) {
-        pathStorageRules = `${cwd}/gdi-admin/storage.rules`;
+        pathStorageRules = `${cwdAdmin}/gdi-admin/storage.rules`;
         if (!fs.existsSync(pathStorageRules)) {
             generalError('ERROR: could not find "storage.rules" in this path');
             return;

@@ -47,18 +47,17 @@ const argv = (0, argv_1.parseArgv)(process.argv);
 const { cwd } = argv;
 // ================================================
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
-    const firebaseJsonPath = path.resolve(cwd, 'firebase.json');
-    if (!fs.existsSync(firebaseJsonPath)) {
-        console.log(chalk_1.default.red(`could not find "firebase.json" in ${firebaseJsonPath}`));
+    const webappJsonPath = path.resolve(cwd, 'webapp.json');
+    if (!fs.existsSync(webappJsonPath)) {
+        console.log(chalk_1.default.red(`could not find "webapp.json" in ${webappJsonPath}`));
         return;
     }
-    const firebaseConfig = fs.readJsonSync(firebaseJsonPath);
+    const firebaseConfig = fs.readJsonSync(webappJsonPath);
     const { projectId } = firebaseConfig;
     (0, env_1.writeEnvVite)(`${cwd}/gdi-admin`, firebaseConfig, {
         menu: ['doing', 'site', 'marketing', 'factory', 'shop', 'extra'].join(','),
     });
     (0, env_1.writeEnvVite)(`${cwd}/gdi-site`, firebaseConfig);
-    (0, env_1.writeEnvVite)(cwd, firebaseConfig);
     const result = yield cli.run('firebase', ['use', projectId], `${cwd}/gdi-admin`);
     console.log(result);
 });

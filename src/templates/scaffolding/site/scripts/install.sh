@@ -29,3 +29,12 @@ git init
 git add .
 git checkout -b main
 git commit -am "initial commit"
+
+echo "Project created successfully"
+echo ""
+echo "Next steps:"
+echo "   - navigate: 'cd $1'"
+echo "   - install: 'npm i' or 'yarn'"
+echo "   - bootstrap: 'gdi bootstrap'"
+echo ""
+

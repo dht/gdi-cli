@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.writeEnvFiles = exports.findOrCreateWebApp = exports.writeOutput = exports.firebaseCliExists = exports.createProject = exports.runCommand$ = exports.runCommand = exports.setCwd = void 0;
+exports.writeEnvFiles = exports.findOrCreateWebApp = exports.writeOutput = exports.firebaseCliExists = exports.createProject = exports.runCommand = exports.setCwd = void 0;
 const fs_1 = __importDefault(require("fs"));
 const chalk_1 = __importDefault(require("chalk"));
 const shared_base_1 = require("shared-base");
@@ -26,12 +26,19 @@ const setCwd = (value) => {
     cwd = value;
 };
 exports.setCwd = setCwd;
-const runCommand = (command, args = []) => __awaiter(void 0, void 0, void 0, function* () {
+const runCommand = (cmd) => __awaiter(void 0, void 0, void 0, function* () {
+    const { command, args = [], loadingMessage, shouldExitOnError = true, } = cmd;
+    if (loadingMessage) {
+        (0, spinner_1.showSpinner)(loadingMessage);
+    }
     const output = {
         success: false,
     };
     const allArgs = [command, '-j', ...args];
     const responseRaw = yield (0, cli_1.run)('firebase', allArgs, cwd);
+    if (loadingMessage) {
+        (0, spinner_1.stopSpinner)();
+    }
     let response = {};
     try {
         response = JSON.parse(responseRaw);
@@ -43,27 +50,22 @@ const runCommand = (command, args = []) => __awaiter(void 0, void 0, void 0, fun
     }
     else {
         output.error = response.error;
+        if (shouldExitOnError) {
+            console.log(`error while running: firebase ${allArgs.join(' ')}`);
+            console.log(chalk_1.default.red(response.error));
+            process.exit(1);
+        }
     }
     return output;
 });
 exports.runCommand = runCommand;
-const runCommand$ = (command, args = [], loadingMessage = '') => __awaiter(void 0, void 0, void 0, function* () {
-    (0, spinner_1.showSpinner)(loadingMessage);
-    const response = yield (0, exports.runCommand)(command, args);
-    (0, spinner_1.stopSpinner)();
-    return response;
-});
-exports.runCommand$ = runCommand$;
 const createProject = (projectName) => __awaiter(void 0, void 0, void 0, function* () {
     const projectId = projectName + '-' + (0, shared_base_1.guid4)();
-    (0, spinner_1.showSpinner)(`Creating new project: ${chalk_1.default.cyan(projectId)}`);
-    const response = yield (0, exports.runCommand)('projects:create', [
-        '-n',
-        projectName,
-        '-i',
-        projectId,
-    ]);
-    (0, spinner_1.stopSpinner)();
+    const response = yield (0, exports.runCommand)({
+        command: 'projects:create',
+        args: ['-n', projectName, '-i', projectId],
+        loadingMessage: `Creating new project: ${chalk_1.default.cyan(projectId)}`,
+    });
     return (0, lodash_1.get)(response, 'data.projectId', '');
 });
 exports.createProject = createProject;
@@ -79,23 +81,38 @@ const writeOutput = (name, output = {}) => {
 exports.writeOutput = writeOutput;
 const findOrCreateWebApp = () => __awaiter(void 0, void 0, void 0, function* () {
     let response, webAppId = '';
-    response = yield (0, exports.runCommand$)('apps:list', ['WEB'], 'Fetching list of web apps'); // prettier-ignore
+    response = yield (0, exports.runCommand)({
+        command: 'apps:list',
+        args: ['WEB'],
+        loadingMessage: 'Fetching list of web apps',
+    });
     webAppId = (0, lodash_1.get)(response, 'data[0].appId', '');
     if (!webAppId) {
-        response = yield (0, exports.runCommand$)('apps:create', ['WEB', 'webApp'], 'Creating a web app'); // prettier-ignore
+        response = yield (0, exports.runCommand)({
+            command: 'apps:create',
+            args: ['WEB', 'webApp'],
+            loadingMessage: 'Creating a web app',
+        });
         webAppId = (0, lodash_1.get)(response, 'data.appId', '');
     }
-    response = yield (0, exports.runCommand$)('apps:sdkconfig', ['WEB', webAppId], 'Fetching web app config'); // prettier-ignore
+    response = yield (0, exports.runCommand)({
+        command: 'apps:sdkconfig',
+        args: ['WEB', webAppId],
+        loadingMessage: 'Fetching web app config',
+    });
+    if (!response.success) {
+        console.log(chalk_1.default.red(response.error));
+        process.exit(1);
+    }
     return response;
 });
 exports.findOrCreateWebApp = findOrCreateWebApp;
 const writeEnvFiles = (firebaseConfig) => {
     (0, spinner_1.showSpinner)('Writing .env files');
-    (0, env_1.writeEnvVite)(`${cwd}/gdi-admin`, firebaseConfig, {
+    (0, env_1.writeEnvVite)(cwd, firebaseConfig, {
         menu: ['doing', 'site', 'marketing', 'factory', 'shop', 'extra'].join(','),
     });
-    (0, env_1.writeEnvVite)(`${cwd}/gdi-site`, firebaseConfig);
-    (0, env_1.writeEnvVite)(cwd, firebaseConfig);
+    (0, env_1.writeEnvVite)(`${cwd}/../gdi-site`, firebaseConfig);
     (0, spinner_1.stopSpinner)();
 };
 exports.writeEnvFiles = writeEnvFiles;

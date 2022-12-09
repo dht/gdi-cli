@@ -12,12 +12,13 @@ import {
 import * as fs from 'fs';
 
 const argv = parseArgv(process.argv);
-const { cwd } = argv;
+const cwd = argv.cwd;
+const cwdAdmin = `${cwd}/gdi-admin`;
 
 // ================================================
 
 const run = async () => {
-    const envResult = readEnvVite(cwd);
+    const envResult = readEnvVite(cwdAdmin);
 
     if (!envResult.success) {
         envError(envResult.error);
@@ -57,9 +58,9 @@ const run = async () => {
 };
 
 const updateStorageRules = (userId: string) => {
-    let pathStorageRules = `${cwd}/storage.rules`;
+    let pathStorageRules = `${cwdAdmin}/storage.rules`;
     if (!fs.existsSync(pathStorageRules)) {
-        pathStorageRules = `${cwd}/gdi-admin/storage.rules`;
+        pathStorageRules = `${cwdAdmin}/gdi-admin/storage.rules`;
         if (!fs.existsSync(pathStorageRules)) {
             generalError('ERROR: could not find "storage.rules" in this path');
             return;
