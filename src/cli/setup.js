@@ -1,27 +1,23 @@
 const fs = require('fs');
 const chalk = require('chalk');
 const path = require('path');
-const globby = require('globby');
+const glob = require('glob');
 const { collectionsPath, indexJsonPath } = require('./paths');
 const { getCommands } = require('./commands');
 const { getConfig } = require('./config');
 const { SCRIPT_TYPES } = require('./types');
 const camelCase = require('lodash/camelCase');
 
-const getCommentLines = (file) => {
+const twoFirstLines = (file) => {
     const content = fs.readFileSync(file).toString();
-
-    const lines = content
-        .split('\n')
-        .filter((line) => line.match(/^\/\//) ?? line.match(/^#/));
-
+    const lines = content.split('\n');
     return lines.splice(0, 2).join('\n');
 };
 
 const getShortcuts = (options) => {
     const { onlyFirstAlias = false } = options;
 
-    const commands = getCommands() ?? {};
+    const commands = getCommands() || {};
     return Object.values(commands).reduce((output, command) => {
         let { shortcuts } = command;
 
@@ -44,7 +40,7 @@ const parseShortcutsFromFile = (file) => {
     const regex = /^[#\/]+ shortcuts: ?([a-zA-Z ,-]+)/gm;
     let output;
 
-    const content = getCommentLines(file);
+    const content = twoFirstLines(file);
     const match = regex.exec(content);
 
     if (match) {
@@ -54,21 +50,21 @@ const parseShortcutsFromFile = (file) => {
             .filter((i) => i);
     }
 
-    return output ?? [];
+    return output || [];
 };
 
 const getDescription = (file) => {
     const regex = /^[#\/]+ desc: ?([a-zA-Z ,-0-9:;'".]+)/gm;
     let output;
 
-    const content = getCommentLines(file);
+    const content = twoFirstLines(file);
     const match = regex.exec(content);
 
     if (match) {
         output = match[1];
     }
 
-    return output ?? '';
+    return output || '';
 };
 
 const rebuild = () => {
@@ -79,8 +75,8 @@ const rebuild = () => {
         (collection) => config.enabled[collection]
     );
 
-    const files = globby
-        .sync([collectionsPath + '/**/*.js', collectionsPath + '/**/*.sh'], {
+    const files = glob
+        .sync(collectionsPath + '/**/*', {
             ignore: [
                 collectionsPath + '/config.json',
                 collectionsPath + '/index.json',

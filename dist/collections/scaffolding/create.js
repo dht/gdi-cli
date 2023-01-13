@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // shortcuts: create
-// desc: generate scaffolding
+// desc: generates scaffolding for fs and data
 const chalk_1 = __importDefault(require("chalk"));
 const scaffoldingVerbs_1 = require("../../config/scaffoldingVerbs");
 const middlewares_1 = __importDefault(require("../../middlewares"));
@@ -19,11 +19,16 @@ if (!midTemplate) {
     console.log(chalk_1.default.red(`could not find template for "${entityType}"`));
     process.exit();
 }
-const stream = (0, streamer_1.streamer)(argv);
-stream.use(midBase_1.middlewares.input());
-stream.use(midTemplate.preRun());
-stream.use(midBase_1.middlewares.scanTemplateFiles({ skip: !isScaffolding }));
-stream.use(midTemplate.parseInstructions());
-stream.use(midBase_1.middlewares.writeFiles({ skip: !isScaffolding }));
-stream.use(midTemplate.postRun());
-stream.run();
+const names = [...argv._].splice(1);
+names.forEach((name) => {
+    const _ = [entityType, name];
+    const newArgv = Object.assign(Object.assign({}, argv), { _ });
+    const stream = new streamer_1.Streamer(newArgv);
+    stream.use(midBase_1.middlewares.input());
+    stream.use(midTemplate.preRun());
+    stream.use(midBase_1.middlewares.scanTemplateFiles({ skip: !isScaffolding }));
+    stream.use(midTemplate.parseInstructions());
+    stream.use(midBase_1.middlewares.writeFiles({ skip: !isScaffolding }));
+    stream.use(midTemplate.postRun());
+    stream.run();
+});

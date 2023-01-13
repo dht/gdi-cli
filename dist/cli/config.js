@@ -5,13 +5,7 @@ const { configPath, collectionsPath } = require('./paths');
 const getConfig = () => {
     if (!fs.existsSync(configPath)) {
         console.log(chalk.cyan('config not found, creating default'));
-        fs.writeJsonSync(configPath, {
-            enabled: {
-                global: true,
-                scaffolding: true,
-                seeding: true,
-            },
-        }, { spaces: 4 });
+        fs.writeJsonSync(configPath, { global: true });
     }
     return fs.readJSONSync(configPath);
 };

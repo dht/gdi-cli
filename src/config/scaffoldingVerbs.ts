@@ -1,4 +1,6 @@
 export const scaffoldingVerbs: any = {
-    block: true,
-    site: true,
+    app: true,
+    component: true,
+    web: true,
+    package: true,
 };

@@ -1,0 +1,24 @@
+{
+    "name": "@gdi/app-$APP_NAME",
+    "version": "1.0.0",
+    "main": "src/index.ts",
+    "license": "MIT",
+    "scripts": {
+        "test": "yarn jest",
+        "yaml": "nodemon -w src/structures/forms.yaml -x 'node ../../scripts/translate-yamls.js web'"
+    },
+    "dependencies": {
+        "@hookform/resolvers": "^2.8.3",
+        "react": "^17.0.2",
+        "react-hook-form": "^7.18.0",
+        "styled-components": "^5.3.3",
+        "yup": "^0.32.11"
+    },
+    "devDependencies": {
+        "@types/jest": "^27.4.0",
+        "@types/react": "^17.0.37",
+        "jest": "^27.5.1",
+        "ts-jest": "^27.1.3",
+        "typescript": "^4.5.5"
+    }
+}

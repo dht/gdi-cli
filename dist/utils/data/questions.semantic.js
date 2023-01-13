@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.questionsSemantic = void 0;
-const input_1 = require("../input");
 const questionsSemantic = (scopes) => [
     {
         name: 'type',
         message: 'type',
-        type: input_1.QuestionType.AutoComplete,
+        type: 'AutoComplete',
         selectedId: 'infra',
         choices: [
             {
@@ -37,7 +36,7 @@ const questionsSemantic = (scopes) => [
     {
         name: 'summary',
         message: 'short summary',
-        type: input_1.QuestionType.Input,
+        type: 'Input',
     },
 ];
 exports.questionsSemantic = questionsSemantic;

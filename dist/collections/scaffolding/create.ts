@@ -1,18 +1,31 @@
 // shortcuts: create
-// desc: generate scaffolding
+// desc: generates scaffolding for fs and data
 import chalk from 'chalk';
 import { scaffoldingVerbs } from '../../config/scaffoldingVerbs';
 import middlewaresByEntityTypes from '../../middlewares';
 import { middlewares as midBase } from '../../middlewares/midBase';
 import { parseArgv } from '../../utils/argv';
-import { streamer } from '../../utils/streamer';
+import { Streamer } from '../../utils/streamer';
 
 const argv = parseArgv(process.argv);
 
-type ValidTypes = 'widget' | 'site';
+type ValidTypes =
+    | 'app'
+    | 'web'
+    | 'package'
+    | 'component'
+    | 'microservice'
+    | 'cards'
+    | 'company'
+    | 'requests'
+    | 'transactions'
+    | 'user'
+    | 'sample'
+    | 'nestAppState'
+    | 'nestCollection';
 
 const entityType = argv._[0] as ValidTypes;
-const isScaffolding = (scaffoldingVerbs as any)[entityType];
+const isScaffolding = scaffoldingVerbs[entityType];
 
 const midTemplate = middlewaresByEntityTypes.create[entityType];
 
@@ -21,13 +34,22 @@ if (!midTemplate) {
     process.exit();
 }
 
-const stream = streamer(argv);
+const names = [...argv._].splice(1);
 
-stream.use(midBase.input());
-stream.use(midTemplate.preRun());
-stream.use(midBase.scanTemplateFiles({ skip: !isScaffolding }));
-stream.use(midTemplate.parseInstructions());
-stream.use(midBase.writeFiles({ skip: !isScaffolding }));
-stream.use(midTemplate.postRun());
+names.forEach((name) => {
+    const _: string[] = [entityType, name];
 
-stream.run();
+    const newArgv = {
+        ...argv,
+        _,
+    };
+
+    const stream = new Streamer(newArgv);
+    stream.use(midBase.input());
+    stream.use(midTemplate.preRun());
+    stream.use(midBase.scanTemplateFiles({ skip: !isScaffolding }));
+    stream.use(midTemplate.parseInstructions());
+    stream.use(midBase.writeFiles({ skip: !isScaffolding }));
+    stream.use(midTemplate.postRun());
+    stream.run();
+});

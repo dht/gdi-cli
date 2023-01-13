@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const packages = require('./packages');
+const packages = require('super0/lib/packages');
 const cli = require('./cli');
 const commands = require('./commands');
 const setup = require('./setup');
