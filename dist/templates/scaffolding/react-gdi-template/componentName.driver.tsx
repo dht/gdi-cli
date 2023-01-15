@@ -32,7 +32,7 @@ export class $CMPDriver extends BaseComponentDriver {
     };
 
     get = {
-        containerClassName: () => {
+        wrapperClassName: () => {
             return this.wrapper.className;
         },
         label: () => {

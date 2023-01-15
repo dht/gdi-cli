@@ -12,11 +12,11 @@ const { workspaces = {} } = rootPackage;
 const { packages: monorepoPackages = [] } = workspaces;
 
 const packagesPaths = monorepoPackages
-    .filter((p) => p.match(/[a-zA-Z0-9]+\/\*/))
-    .map((p) => p.replace(/\/\*$/, ''));
+    .filter((p: string) => p.match(/[a-zA-Z0-9]+\/\*/))
+    .map((p: string) => p.replace(/\/\*$/, ''));
 
 const packagesNodeModulesPaths = packagesPaths.map(
-    (p) => `${p}/*/node_modules`
+    (p: string) => `${p}/*/node_modules`
 );
 
 const packagesLockFilesPaths = packagesPaths.reduce(

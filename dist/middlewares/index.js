@@ -1,10 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const midCreateWidget_1 = require("./midCreateWidget");
-const midCreateSite_1 = require("./midCreateSite");
+const midWeb_1 = require("./midWeb");
+const midPackage_1 = require("./midPackage");
+const midCreateApp_1 = require("./midCreateApp");
+const midCreateComponents_1 = require("./midCreateComponents");
 exports.default = {
     create: {
-        widget: midCreateWidget_1.middlewares,
-        site: midCreateSite_1.middlewares,
+        app: midCreateApp_1.middlewares,
+        component: midCreateComponents_1.middlewares,
+        web: midWeb_1.middlewares,
+        package: midPackage_1.middlewares,
     },
 };

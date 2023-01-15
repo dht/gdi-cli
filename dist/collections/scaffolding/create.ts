@@ -9,20 +9,7 @@ import { Streamer } from '../../utils/streamer';
 
 const argv = parseArgv(process.argv);
 
-type ValidTypes =
-    | 'app'
-    | 'web'
-    | 'package'
-    | 'component'
-    | 'microservice'
-    | 'cards'
-    | 'company'
-    | 'requests'
-    | 'transactions'
-    | 'user'
-    | 'sample'
-    | 'nestAppState'
-    | 'nestCollection';
+type ValidTypes = 'app' | 'web' | 'package' | 'component';
 
 const entityType = argv._[0] as ValidTypes;
 const isScaffolding = scaffoldingVerbs[entityType];

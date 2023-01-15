@@ -1,9 +1,13 @@
-import { middlewares as widget } from './midCreateWidget';
-import { middlewares as site } from './midCreateSite';
+import { middlewares as web } from './midWeb';
+import { middlewares as npmPackage } from './midPackage';
+import { middlewares as app } from './midCreateApp';
+import { middlewares as component } from './midCreateComponents';
 
 export default {
     create: {
-        widget,
-        site,
+        app,
+        component,
+        web,
+        package: npmPackage,
     },
 };

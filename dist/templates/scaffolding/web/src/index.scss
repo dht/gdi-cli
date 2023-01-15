@@ -1,0 +1,25 @@
+@import 'normalize.scss';
+
+html {
+    min-height: 100%;
+    display: flex;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #334;
+    color: #ccc;
+}
+
+body,
+#root {
+    display: flex;
+    flex: 1;
+}
+
+body {
+    overflow-x: hidden;
+    padding: 0;
+}
