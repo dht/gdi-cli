@@ -11,7 +11,6 @@ const path_1 = __importDefault(require("path"));
 const scaffolding_1 = require("../utils/scaffolding");
 const console_1 = require("../utils/console");
 const input = (options = {}) => (command, next) => {
-    console.time('gathering input');
     if (options.skip) {
         next();
         return;
@@ -30,7 +29,6 @@ const input = (options = {}) => (command, next) => {
         template: entityType,
         templatePath: '',
     };
-    console.timeEnd('gathering input');
     next();
 };
 const scanTemplateFiles = (options = {}) => (command, next) => {
@@ -38,16 +36,12 @@ const scanTemplateFiles = (options = {}) => (command, next) => {
         next();
         return;
     }
-    console.log(123);
-    console.time(`scanning terminal files`);
     const { params, rulesReplaceFileName = {}, rulesReplaceContent = {}, } = command.local;
-    console.log('params => ', JSON.stringify(params));
     const { outputDir, templatesPath, template } = params;
-    const templatePath = `${templatesPath}/${template}`;
-    console.log('path => ', templatePath);
+    const templatePath = params.templatePath || `${templatesPath}/${template}`;
     command.local.params.templatePath = templatePath;
     command.local.filesToCreate = globby_1.default
-        .sync('**/*', { cwd: templatePath, dot: true })
+        .sync('**/*', { cwd: templatePath })
         .map((file) => {
         const content = fs_1.default
             .readFileSync(`${templatePath}/${file}`)
@@ -59,7 +53,6 @@ const scanTemplateFiles = (options = {}) => (command, next) => {
             content: parsedContent,
         };
     });
-    console.timeEnd('scanning terminal files');
     next();
 };
 const saveToCliDb = (options = {}) => (command, next) => {
@@ -74,7 +67,6 @@ const writeFiles = (options = {}) => (command, next) => {
         next();
         return;
     }
-    console.time('writing files');
     const { params, filesToCreate } = command.local;
     const { outputDir = '' } = params;
     (0, console_1.printTable)([
@@ -98,7 +90,6 @@ const writeFiles = (options = {}) => (command, next) => {
         fs_1.default.writeFileSync(filepath, content);
         console.log(chalk_1.default.green('Ok'));
     });
-    console.timeEnd('writing files');
     next();
 };
 exports.middlewares = {

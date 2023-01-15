@@ -1,43 +1,52 @@
 import styled from 'styled-components';
-import { $CMPColors } from './$CMP';
-import { darken } from 'polished';
-
-export const Wrapper = styled.div<{ colors: $CMPColors }>`
-    flex: 1;
-    background-color: ${(props) => props.colors.background ?? '#1a7870'};
-    height: 60vh;
-    max-height: 800px;
-    display: flex;
-`;
+import { ButtonBase } from '../../components/Button/Button.style';
+import { Grid, mobile, css } from '@gdi/engine';
 
 export const Wrapper = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    max-width: 1440px;
-    margin: 0 auto;
+    flex: 1;
+    height: 60vh;
+
+    ${mobile(css``)}
+`;
+
+export const Container = styled(Grid.Container)``;
+
+export const Row = styled(Grid.Row)`
+    border-color: 1px solid green;
+`;
+
+export const Column = styled(Grid.Column)`
+    border-color: 1px solid green;
+`;
+
+export const ImageWrapper = styled.div`
     flex: 1;
 `;
 
-export const CTA = styled.a<{ colors: $CMPColors }>`
-    background-color: ${(props) => props.colors.text ?? '#aaef69'};
-    font-weight: bold;
-    color: #333;
-    text-decoration: none;
-    font-size: 17px;
-    padding: 10px 50px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
+export const Image = styled.img`
+    max-width: 88vw;
+    min-height: 300px;
+`;
 
-    &:hover {
-        background-color: ${(props) =>
-            darken(0.1, props.colors.text ?? '#aaef69')};
-    }
+export const Details = styled.div`
+    flex: 1;
+`;
 
-    &:active {
-        position: relative;
-        bottom: 2px;
-        ${(props) => props.theme.left('2px')}
-    }
+export const H1 = styled.h1`
+    font-size: 42px;
+    max-width: 400px;
+`;
+
+export const P = styled.p`
+    font-size: 20px;
+    max-width: 400px;
+    line-height: 29px;
+`;
+
+export const Actions = styled.div`
+    margin-top: 70px;
+`;
+
+export const CTA = styled.a(ButtonBase)`
+    box-shadow: 0 4px 14px rgb(247 206 130 / 50%);
 `;

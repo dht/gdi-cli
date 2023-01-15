@@ -9,8 +9,13 @@
         "forceConsistentCasingInFileNames": true,
         "baseUrl": "../../",
         "removeComments": false,
-        "types": ["types-base", "@gdi/types", "@types/jest"],
+        "types": ["types-base", "@gdi/types", "@types/jest", "@types/node"],
         "outDir": "dist"
     },
-    "exclude": ["src/templates/**", "dist/**"]
+    "exclude": ["src/templates/**", "dist/**"],
+    "ts-node": {
+        "compilerOptions": {
+            "module": "commonjs"
+        }
+    }
 }

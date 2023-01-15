@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script
+            src="https://unpkg.com/react@18/umd/react.development.js"
+            crossorigin
+        ></script>
+        <script
+            src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+            crossorigin
+        ></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"
+            integrity="sha512-xIPqqrfvUAc/Cspuj7Bq0UtHNo/5qkdyngx6Vwt+tmbvTLDszzXM0G6c91LXmGrRx8KEPulT+AfOOez+TeVylg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/classnames/2.3.1/index.min.js"
+            integrity="sha512-6Wf/IjsSjLaFTYco3pXM+49kC5M7jtbHzxMcdmYvwDskjv7cMcBPmJX2053aoQ+LRi8Po4ZsCtkNMf+NhXhNyQ=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400&display=swap"
+            rel="stylesheet"
+        />
+
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+        <style type="text/css">
+            body,
+            h1,
+            input {
+                font-family: monospace;
+            }
+
+            body.rtl textarea {
+                direction: rtl;
+            }
+
+            .list {
+                display: flex;
+                flex-direction: column;
+                border: 1px solid #333;
+                position: relative;
+            }
+
+            .list .content {
+                width: 400px;
+                height: 800px;
+                overflow-y: auto;
+            }
+
+            .item {
+                padding: 2px 5px;
+                font-size: 14px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .item:hover {
+                background-color: #aaa;
+                color: white;
+                cursor: pointer;
+            }
+
+            .item.selected {
+                background-color: #333;
+                color: white;
+            }
+
+            .row {
+                display: flex;
+                flex-direction: row;
+                width: 1000px;
+            }
+
+            .editor {
+                flex: 1;
+                display: flex;
+            }
+
+            .search {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+                display: flex;
+            }
+
+            .search input {
+                padding: 10px 5px;
+                font-size: 14px;
+                border: none;
+                flex: 1;
+            }
+
+            textarea {
+                flex: 1;
+                padding: 30px;
+                font-size: 24px;
+                border-left: none;
+                font-family: 'Rubik', sans-serif;
+                font-weight: 300;
+            }
+
+            .add-button {
+                position: absolute;
+                bottom: 10px;
+                left: 10px;
+                z-index: 2;
+            }
+
+            .add-button button {
+                width: 50px;
+                height: 50px;
+                border-radius: 25px;
+                font-weight: 300;
+                font-size: 30px;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                font-family: 'Rubik';
+                border: none;
+                background-color: #fff;
+                border: 1px solid #333;
+                color: #333;
+            }
+
+            .add-button button:hover {
+                background-color: #eee;
+            }
+
+            .add-button button:active {
+                position: relative;
+                bottom: 2px;
+                left: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+
+        <script type="text/babel">
+            const rtlLanguages = ['he', 'ar'];
+
+            let instance = axios.create({
+                baseURL: 'http://localhost:3300',
+            });
+
+            const params = new URLSearchParams(document.location.search);
+
+            const iw = params.get('iw');
+
+            if (rtlLanguages.includes(iw)) {
+                document.querySelector('body').classList.add('rtl');
+            }
+
+            function App() {
+                const [state, patchState] = useSetState({});
+                const [selectedKey, setSelectedKey] = React.useState('');
+                const [search, setSearch] = React.useState('');
+                const searchRef = React.useRef();
+                const searchFocused = useFocus(searchRef);
+
+                const value = state[selectedKey] || '';
+
+                React.useEffect(() => {
+                    instance.get(`${iw}`).then((res) => {
+                        patchState(res.data);
+                    });
+                }, []);
+
+                const onEdit = React.useCallback(
+                    (value) => {
+                        patchState({ [selectedKey]: value });
+                        instance.patch(`/${iw}/${selectedKey}`, { value });
+                    },
+                    [state, selectedKey]
+                );
+
+                const onAdd = React.useCallback(
+                    (keys) => {
+                        const change = keys.reduce((output, key) => {
+                            output[key] = '';
+                            return output;
+                        }, {});
+                        patchState(change);
+
+                        keys.forEach((key) => {
+                            instance.patch(`/${iw}/${key}`, { value: ' ' });
+                        });
+
+                        setSelectedKey(keys[0]);
+                        setSearch(keys[0]);
+                        focusOnEditor();
+                    },
+                    [state]
+                );
+
+                const focusOnEditor = () => {
+                    setTimeout(() => {
+                        const el = document.querySelector('textarea');
+                        el.focus();
+                    }, 100);
+                };
+
+                const focusOnSearch = () => {
+                    setTimeout(() => {
+                        const el = document.querySelector('.search input');
+                        el.focus();
+                    }, 100);
+                };
+
+                const askForKeyValuesToAdd = React.useCallback(() => {
+                    const keysToAdd = prompt(
+                        'Key or keys: comma delimited',
+                        selectedKey
+                    );
+
+                    if (!keysToAdd || keysToAdd.trim() === '') {
+                        return;
+                    }
+
+                    const keys = keysToAdd.split(',').map((i) => i.trim());
+                    if (keys.length > 0) {
+                        onAdd(keys);
+                    }
+                }, [selectedKey]);
+
+                const items = React.useMemo(() => {
+                    return Object.keys(state)
+                        .filter((key) => !search || key.includes(search))
+                        .map((key) => {
+                            return {
+                                key,
+                                value: key,
+                            };
+                        });
+                }, [state, search]);
+
+                const onDown = React.useCallback(() => {
+                    const index = items.findIndex(
+                        (item) => item.key === selectedKey
+                    );
+                    const nextIndex = index === -1 ? 0 : index + 1;
+                    const nextItem = items[nextIndex];
+
+                    if (!nextItem) {
+                        return;
+                    }
+
+                    setSelectedKey(nextItem.key);
+                }, [items, selectedKey]);
+
+                const onUp = React.useCallback(() => {
+                    const index = items.findIndex(
+                        (item) => item.key === selectedKey
+                    );
+                    const nextIndex = index === -1 ? 0 : index - 1;
+                    const nextItem = items[nextIndex];
+
+                    if (!nextItem) {
+                        return;
+                    }
+
+                    setSelectedKey(nextItem.key);
+                }, [items, selectedKey]);
+
+                useArrows(
+                    {
+                        onDown,
+                        onUp,
+                    },
+                    [onDown, onUp]
+                );
+
+                useKey(
+                    'Escape',
+                    () => {
+                        if (searchFocused) {
+                            focusOnEditor();
+                        } else {
+                            focusOnSearch();
+                        }
+                    },
+                    [searchFocused]
+                );
+
+                useKey(
+                    'a',
+                    (ev) => {
+                        if (ev.ctrlKey) {
+                            askForKeyValuesToAdd();
+                        }
+                    },
+                    [askForKeyValuesToAdd]
+                );
+
+                useKey(
+                    'e',
+                    (ev) => {
+                        if (ev.ctrlKey) {
+                            focusOnEditor();
+                        }
+                    },
+                    []
+                );
+
+                useKey(
+                    's',
+                    (ev) => {
+                        if (ev.ctrlKey) {
+                            focusOnSearch();
+                        }
+                    },
+                    []
+                );
+
+                return (
+                    <div className="container">
+                        <h1>i18n Editor</h1>
+                        <div className="row">
+                            <List
+                                items={items}
+                                onClick={setSelectedKey}
+                                selectedKey={selectedKey}
+                            >
+                                <Search
+                                    ref={searchRef}
+                                    value={search}
+                                    onChange={setSearch}
+                                />
+                                <AddButton
+                                    onClick={askForKeyValuesToAdd}
+                                    selectedKey={selectedKey}
+                                />
+                            </List>
+                            <Editor
+                                value={value}
+                                onEdit={onEdit}
+                                readOnly={!selectedKey}
+                            />
+                        </div>
+                    </div>
+                );
+            }
+
+            function List(props) {
+                const { items, selectedKey } = props;
+
+                function renderItem(item) {
+                    const className = classNames('item', {
+                        selected: selectedKey === item.key,
+                    });
+
+                    return (
+                        <div
+                            key={item.key}
+                            className={className}
+                            onClick={() => props.onClick(item.key)}
+                        >
+                            {item.value}
+                        </div>
+                    );
+                }
+
+                function renderItems() {
+                    return items.map((item) => renderItem(item));
+                }
+
+                return (
+                    <div className="list">
+                        {props.children}
+                        <div className="content">{renderItems()}</div>
+                    </div>
+                );
+            }
+
+            const Search = React.forwardRef((props, ref) => {
+                const { value } = props;
+
+                function onChange(ev) {
+                    props.onChange(ev.target.value);
+                }
+
+                return (
+                    <div className="search">
+                        <input
+                            placeholder="Search..."
+                            type="text"
+                            value={value}
+                            ref={ref}
+                            onChange={onChange}
+                        />
+                    </div>
+                );
+            });
+
+            function AddButton(props) {
+                return (
+                    <div className="add-button">
+                        <button onClick={props.onClick}>+</button>
+                    </div>
+                );
+            }
+
+            function Editor(props) {
+                const { value, readOnly } = props;
+
+                function onChange(ev) {
+                    props.onEdit(ev.target.value);
+                }
+
+                return (
+                    <div className="editor">
+                        <textarea
+                            readOnly={readOnly}
+                            value={value}
+                            onChange={onChange}
+                        ></textarea>
+                    </div>
+                );
+            }
+
+            function useSetState(initialValue) {
+                const [state, setState] = React.useState(initialValue);
+
+                const patchState = React.useCallback(
+                    (change) => {
+                        setState({
+                            ...state,
+                            ...change,
+                        });
+                    },
+                    [state]
+                );
+
+                return [state, patchState];
+            }
+
+            function useKey(key, callback, deps, options = {}) {
+                const { on = true } = options;
+
+                React.useEffect(() => {
+                    const onPress = (ev) => {
+                        if (ev.key === key) {
+                            callback(ev);
+                        }
+                    };
+
+                    if (on) {
+                        document.addEventListener('keydown', onPress);
+                    } else {
+                        document.removeEventListener('keydown', onPress);
+                    }
+
+                    return () => {
+                        document.removeEventListener('keydown', onPress);
+                    };
+                }, [on, ...deps]);
+            }
+
+            function useArrows({ onDown, onUp }, deps) {
+                useKey('ArrowUp', onUp, deps);
+                useKey('ArrowDown', onDown, deps);
+            }
+
+            function useFocus(ref) {
+                const [focused, setFocus] = React.useState(false);
+
+                React.useEffect(() => {
+                    if (!ref.current) {
+                        return;
+                    }
+
+                    const current = ref.current;
+
+                    const onFocus = () => {
+                        setFocus(true);
+                    };
+
+                    const onBlur = () => {
+                        setFocus(false);
+                    };
+
+                    current.addEventListener('focus', onFocus);
+                    current.addEventListener('blur', onBlur);
+
+                    return () => {
+                        current.removeEventListener('focus', onFocus);
+                        current.removeEventListener('blur', onBlur);
+                    };
+                }, [ref]);
+
+                return focused;
+            }
+
+            const container = document.getElementById('root');
+            const root = ReactDOM.createRoot(container);
+            root.render(<App />);
+        </script>
+    </body>
+</html>

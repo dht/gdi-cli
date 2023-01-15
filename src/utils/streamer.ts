@@ -2,49 +2,41 @@ import { Json, Middleware } from '../types';
 import { Command } from './command';
 import { isPromise } from './promise';
 
-let argv: Json = {};
+export class Streamer {
+    private middlewares: Middleware[] = [];
 
-let middlewares: Middleware[] = [];
+    private command: Command | undefined;
 
-let command: Command;
+    private index = 0;
 
-let index = 0;
+    constructor(private argv: Json) {}
 
-const init = (_argv: Json) => {
-    argv = _argv;
+    use(middleware: Middleware) {
+        this.middlewares.push(middleware);
+    }
 
-    return {
-        use,
-        next,
-        run,
+    next = async () => {
+        const nextMiddleware = this.middlewares[this.index++];
+
+        if (!nextMiddleware) {
+            return;
+        }
+
+        if (this.command) {
+            const response = nextMiddleware(this.command, this.next);
+            if (isPromise(response)) {
+                await response;
+            }
+        }
     };
-};
 
-const use = (middleware: Middleware) => {
-    middlewares.push(middleware);
-};
-
-const next = async () => {
-    const nextMiddleware = middlewares[index++];
-
-    if (!nextMiddleware) {
-        return;
+    clear() {
+        this.index = 0;
     }
 
-    const response = nextMiddleware(command, next);
-    if (isPromise(response)) {
-        await response;
+    run() {
+        this.command = new Command(this.argv);
+        this.clear();
+        this.next();
     }
-};
-
-const clear = () => {
-    index = 0;
-};
-
-const run = () => {
-    command = new Command(argv);
-    clear();
-    next();
-};
-
-export const streamer = init;
+}

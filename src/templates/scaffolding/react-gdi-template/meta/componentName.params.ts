@@ -4,9 +4,16 @@ export const params: IWidgetParams = {
     id,
     schema: {
         strings: {
-            ctaButtonText: { fieldType: 'text', order: 0 },
+            header: { fieldType: 'text', isRequired: true, order: 0 },
+            ctaButtonText: { fieldType: 'text', isRequired: true, order: 1 },
         },
-        colors: {},
-        extra: {},
+        colors: {
+            background: { fieldType: 'color', order: 0 },
+            text: { fieldType: 'color', order: 1 },
+        },
+        extra: {
+            href: { fieldType: 'url', isRequired: true, order: 0 },
+            imageUrl: { fieldType: 'image', isRequired: true, order: 1 },
+        },
     },
 };

@@ -1,18 +1,18 @@
 export const screenshots: IScreenshotsPerFlavour = {
-    basic: {
+    normal: {
         desktop: {
             large: {
                 width: 1000,
                 height: 400,
                 ratio: 2.5,
-                url: 'screenshot.gdi.$CMPLC-simple.simple.desktop.large.webp',
+                url: 'screenshot.$TEMPLATE_NAME.$CMPLC-basic.normal.desktop.large.webp',
                 urlIsRemote: false,
             },
             thumb: {
                 width: 1000,
                 height: 400,
                 ratio: 2.5,
-                url: 'screenshot.gdi.$CMPLC-simple.simple.desktop.thumb.webp',
+                url: 'screenshot.$TEMPLATE_NAME.$CMPLC-basic.normal.desktop.thumb.webp',
                 urlIsRemote: false,
             },
         },
@@ -21,14 +21,14 @@ export const screenshots: IScreenshotsPerFlavour = {
                 width: 500,
                 height: 1337,
                 ratio: 0.3739715781600598,
-                url: 'screenshot.gdi.$CMPLC-simple.simple.mobile.large.webp',
+                url: 'screenshot.$TEMPLATE_NAME.$CMPLC-basic.normal.mobile.large.webp',
                 urlIsRemote: false,
             },
             thumb: {
                 width: 500,
                 height: 1337,
                 ratio: 0.3739715781600598,
-                url: 'screenshot.gdi.$CMPLC-simple.simple.mobile.thumb.webp',
+                url: 'screenshot.$TEMPLATE_NAME.$CMPLC-basic.normal.mobile.thumb.webp',
                 urlIsRemote: false,
             },
         },

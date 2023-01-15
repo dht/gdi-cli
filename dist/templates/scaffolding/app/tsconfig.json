@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "es6",
+        "jsx": "react",
+        "baseUrl": "../..",
+        "paths": {
+            "@gdi/root-types": ["packages/root-types"],
+            "@gdi/testing-base": ["packages/web-testing-base"],
+            "@gdi/ui": ["packages/web-ui"],
+            "@gdi/platformer": ["packages/platformer"]
+        }
+    },
+    "include": ["**/*.tsx", "**/*.ts"],
+    "exclude": []
+}

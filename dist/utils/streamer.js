@@ -9,40 +9,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.streamer = void 0;
+exports.Streamer = void 0;
 const command_1 = require("./command");
 const promise_1 = require("./promise");
-let argv = {};
-let middlewares = [];
-let command;
-let index = 0;
-const init = (_argv) => {
-    argv = _argv;
-    return {
-        use,
-        next,
-        run,
-    };
-};
-const use = (middleware) => {
-    middlewares.push(middleware);
-};
-const next = () => __awaiter(void 0, void 0, void 0, function* () {
-    const nextMiddleware = middlewares[index++];
-    if (!nextMiddleware) {
-        return;
+class Streamer {
+    constructor(argv) {
+        this.argv = argv;
+        this.middlewares = [];
+        this.index = 0;
+        this.next = () => __awaiter(this, void 0, void 0, function* () {
+            const nextMiddleware = this.middlewares[this.index++];
+            if (!nextMiddleware) {
+                return;
+            }
+            if (this.command) {
+                const response = nextMiddleware(this.command, this.next);
+                if ((0, promise_1.isPromise)(response)) {
+                    yield response;
+                }
+            }
+        });
     }
-    const response = nextMiddleware(command, next);
-    if ((0, promise_1.isPromise)(response)) {
-        yield response;
+    use(middleware) {
+        this.middlewares.push(middleware);
     }
-});
-const clear = () => {
-    index = 0;
-};
-const run = () => {
-    command = new command_1.Command(argv);
-    clear();
-    next();
-};
-exports.streamer = init;
+    clear() {
+        this.index = 0;
+    }
+    run() {
+        this.command = new command_1.Command(this.argv);
+        this.clear();
+        this.next();
+    }
+}
+exports.Streamer = Streamer;
